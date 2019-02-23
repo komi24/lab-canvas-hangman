@@ -1,7 +1,7 @@
 var hangman;
 
 function Hangman() {
-  this.words      = ['IRONHACK', 'NODEJS', 'JAVASCRIPT', 'METEOR', 'ANGULAR', 'BARCELONA', 'MADRID', 'MIAMI', 'HTML'];
+  this.words      = ['IRONHACK'];
   this.secretWord = '';
   this.letters    = [];
   this.guessedLetter = '';
@@ -29,10 +29,13 @@ Hangman.prototype.checkClickedLetters = function (key) {
 
 Hangman.prototype.addCorrectLetter = function (i) {
 	this.guessedLetter += this.secretWord[i].toUpperCase();
+	this.hangmanCanvas.writeCorrectLetter(i);
 };
 
 Hangman.prototype.addWrongLetter = function (letter) {
 	this.errorsLeft --;
+	this.hangmanCanvas.writeWrongLetter(letter,this.errorsLeft)
+	this.hangmanCanvas.drawHangman(this.errorsLeft)
 };
 
 Hangman.prototype.checkGameOver = function () {
@@ -49,5 +52,13 @@ document.getElementById('start-game-button').onclick = function () {
 
 
 document.onkeydown = function (e) {
-
+	if (hangman.checkIfLetter(e.keyCode) 
+		&& hangman.checkClickedLetters(e.key.toUpperCase())) {
+		if (hangman.secretWord.includes(e.key.toUpperCase())) {
+			// La lettre est présente dans le Secret Word
+			hangman.addCorrectLetter(hangman.secretWord.indexOf(e.key.toUpperCase()))
+		} else {
+			hangman.addWrongLetter(e.key.toUpperCase());
+		}
+	}
 };
